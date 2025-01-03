@@ -14,6 +14,7 @@ type Video struct {
 	Title     string `json:"title"`
 	Url       string `json:"url"`
 	Thumbnail string `json:"thumbnail"`
+	Channel   string `json:"channel"`
 }
 
 func SearchHandler(c *fiber.Ctx) error {
@@ -31,6 +32,7 @@ func SearchHandler(c *fiber.Ctx) error {
 			Title:     video.Title,
 			Url:       video.URL,
 			Thumbnail: video.RichThumbnail.URL,
+			Channel:   video.Channel.Title,
 		})
 	}
 
