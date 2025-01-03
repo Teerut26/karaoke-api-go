@@ -12,7 +12,7 @@ func VideoHandler(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).SendString("Missing file query parameter")
 	}
 
-	videoPath := "video/" + file + ".webm"
+	videoPath := "video/" + file
 
 	if _, err := os.Stat(videoPath); os.IsNotExist(err) {
 		return c.Status(fiber.StatusNotFound).SendString("Video file not found")
