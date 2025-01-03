@@ -1,8 +1,40 @@
 package route
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"github.com/gofiber/fiber/v2"
+	"github.com/raitonoberu/ytsearch"
+)
+
+type ResponseSearch struct {
+	Videos []Video `json:"videos"`
+}
+
+type Video struct {
+	ID        string `json:"id"`
+	Title     string `json:"title"`
+	Url       string `json:"url"`
+	Thumbnail string `json:"thumbnail"`
+}
 
 func SearchHandler(c *fiber.Ctx) error {
-	return c.SendString("Search")
+	keywords := c.Query("keywords")
+	search := ytsearch.VideoSearch(keywords)
+	result, err := search.Next()
+	if err != nil {
+		panic(err)
+	}
 
+	var videos []Video
+	for _, video := range result.Videos {
+		videos = append(videos, Video{
+			ID:        video.ID,
+			Title:     video.Title,
+			Url:       video.URL,
+			Thumbnail: video.RichThumbnail.URL,
+		})
+	}
+
+	return c.Status(200).JSON(ResponseSearch{
+		Videos: videos,
+	})
 }
