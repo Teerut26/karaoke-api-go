@@ -19,6 +19,7 @@ type SteamRequestBody struct {
 func SteamHandler(c *fiber.Ctx) error {
 	youtubeURL := c.Query("youtube_url")
 	height := c.Query("height")
+	redirect := c.Query("redirect")
 
 	if height == "" {
 		height = "480"
@@ -57,8 +58,15 @@ func SteamHandler(c *fiber.Ctx) error {
 		}
 	}()
 
-	return c.JSON(fiber.Map{
-		"video": `/v1/video/` + fileNameWithUnix + `.webm`,
-		"hls":   `/v1/hls/` + fileNameWithUnix + `/` + fileName + `.m3u8`,
-	})
+	switch redirect {
+	case "video":
+		return c.Redirect("/v1/video/" + fileNameWithUnix + ".webm")
+	case "hls":
+		return c.Redirect("/v1/hls/" + fileNameWithUnix + "/" + fileName + ".m3u8")
+	default:
+		return c.JSON(fiber.Map{
+			"video": `/v1/video/` + fileNameWithUnix + `.webm`,
+			"hls":   `/v1/hls/` + fileNameWithUnix + `/` + fileName + `.m3u8`,
+		})
+	}
 }
