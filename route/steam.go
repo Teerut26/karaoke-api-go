@@ -31,10 +31,11 @@ func SteamHandler(c *fiber.Ctx) error {
 	}
 
 	expirsTime := time.Now().Add(5 * time.Minute)
-	fileName := "video/" + uuid.New().String() + "_" + strconv.FormatInt(expirsTime.Unix(), 10)
+	fileName := uuid.New().String() + "_" + strconv.FormatInt(expirsTime.Unix(), 10)
+	fileFullName := "video/" + fileName
 
 	ytdlp.MustInstall(context.TODO(), nil)
-	dl := ytdlp.New().Format(`bestvideo[height<=` + height + `]+bestaudio[ext=webm][protocol=https]/best`).Output(fileName + ".%(ext)s")
+	dl := ytdlp.New().Format(`bestvideo[height<=` + height + `]+bestaudio[ext=webm][protocol=https]/best`).Output(fileFullName + ".%(ext)s")
 	_, err := dl.Run(context.TODO(), youtubeURL)
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{
@@ -42,16 +43,5 @@ func SteamHandler(c *fiber.Ctx) error {
 		})
 	}
 
-	videoPath := fileName + ".webm"
-
-	if _, err := os.Stat(videoPath); os.IsNotExist(err) {
-		return c.Status(fiber.StatusNotFound).SendString("Video file not found")
-	}
-
-	// defer os.Remove(videoPath)
-
-	c.Set("Content-Type", "video/webm")
-	c.Set("Accept-Ranges", "bytes")
-
-	return c.SendFile(videoPath)
+	return c.Redirect("/v1/video/" + fileName)
 }
