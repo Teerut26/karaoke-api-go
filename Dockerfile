@@ -17,7 +17,7 @@ COPY . .
 RUN go build -o main .
 
 FROM alpine:latest AS runner
-RUN apk -U add yt-dlp
+RUN apk -U add yt-dlp && apk -U add ffmpeg
 
 WORKDIR /app
 
