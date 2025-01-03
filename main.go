@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"karaoke-api-go/route"
 	"karaoke-api-go/services"
 	"time"
@@ -33,23 +32,8 @@ func main() {
 	v1Route.Get("/steam", route.SteamHandler)
 	v1Route.Get("/video/:file", route.VideoHandler)
 
-	hlsRote := v1Route.Group("/hls")
-	hlsRote.Get(":id/:playlist", func(c *fiber.Ctx) error {
-		id := c.Params("id")
-		playlist := c.Params("playlist")
-
-		fmt.Println("id", id)
-		fmt.Println("playlist", playlist)
-		filePath := "./hls/" + id + "/" + playlist
-		return c.SendFile(filePath)
-	})
-	hlsRote.Get(":id/:segment", func(c *fiber.Ctx) error {
-		id := c.Params("id")
-		segment := c.Params("segment")
-		filePath := "./hls/" + id + "/" + segment
-
-		return c.SendFile(filePath)
-	})
+	hlsRoute := v1Route.Group("/hls")
+	route.HLSHandler(hlsRoute)
 
 	app.Listen(":3000")
 }
