@@ -1,4 +1,4 @@
-package main
+package dto
 
 type TYDLPResponse struct {
 	ID      string `json:"id"`

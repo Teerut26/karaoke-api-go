@@ -30,6 +30,7 @@ func main() {
 
 	v1Route := app.Group("/v1")
 	v1Route.Get("/steam", route.SteamHandler)
+	v1Route.Get("/sources", route.SourcesHandler)
 	v1Route.Get("/video/:file", route.VideoHandler)
 
 	hlsRoute := v1Route.Group("/hls")
