@@ -2,6 +2,8 @@ package main
 
 import (
 	"karaoke-api-go/route"
+	"karaoke-api-go/route/hls"
+	"karaoke-api-go/route/karaoke"
 	"karaoke-api-go/route/ws"
 	"karaoke-api-go/services"
 	"log"
@@ -11,9 +13,16 @@ import (
 	"github.com/gofiber/contrib/websocket"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/joho/godotenv"
 )
 
 func main() {
+
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
 	cron := gocron.NewScheduler(time.UTC)
 
 	cron.Every("5m").Do(func() {
@@ -51,12 +60,19 @@ func main() {
 	}))
 
 	v1Route := app.Group("/v1")
+
 	v1Route.Get("/steam", route.SteamHandler)
 	v1Route.Get("/sources", route.SourcesHandler)
 	v1Route.Get("/search", route.SearchHandler)
 	v1Route.Get("/video/:file", route.VideoHandler)
+
 	hlsRoute := v1Route.Group("/hls")
-	route.HLSHandler(hlsRoute)
+	hlsRoute.Get(":id/:playlist", hls.PlaylistHandler)
+	hlsRoute.Get(":id/:segment", hls.SegmentHandler)
+
+	karaokeRoute := v1Route.Group("/karaoke")
+	karaokeRoute.Get("/queues", karaoke.QueuesHandler)
+	karaokeRoute.Post("/skip", karaoke.SkipHandler)
 
 	log.Fatal(app.Listen(":3000"))
 }
