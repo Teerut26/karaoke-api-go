@@ -1,12 +1,18 @@
 package ws
 
 import (
+	"encoding/json"
 	"log"
 
 	"github.com/gofiber/contrib/websocket"
 )
 
 func ControlSkipHandler(conn *websocket.Conn, websocketServer *WebSocketServer) error {
+
+	type Body struct {
+		Skip bool `json:"skip"`
+	}
+
 	defer func() {
 		log.Println("Skip Client disconnected")
 		websocketServer.RemoveClient(conn)
@@ -22,10 +28,18 @@ func ControlSkipHandler(conn *websocket.Conn, websocketServer *WebSocketServer) 
 			log.Println("Read error:", err)
 			break
 		}
-		log.Printf("Received: %s", message)
+
+		body := new(Body)
+		err = json.Unmarshal(message, &body)
+		if err != nil {
+			log.Println("Unmarshal error:", err)
+			continue
+		}
+
+		bytes, _ := json.Marshal(body)
 
 		websocketServer.Broadcast <- Message{
-			Payload: string(message),
+			Payload: string(bytes),
 		}
 	}
 
@@ -33,6 +47,11 @@ func ControlSkipHandler(conn *websocket.Conn, websocketServer *WebSocketServer) 
 }
 
 func ControlSongEndHandler(conn *websocket.Conn, websocketServer *WebSocketServer) error {
+
+	type Body struct {
+		ID bool `json:"id"`
+	}
+
 	defer func() {
 		log.Println("SongEnd Client disconnected")
 		websocketServer.RemoveClient(conn)
@@ -48,10 +67,18 @@ func ControlSongEndHandler(conn *websocket.Conn, websocketServer *WebSocketServe
 			log.Println("Read error:", err)
 			break
 		}
-		log.Printf("Received: %s", message)
+
+		body := new(Body)
+		err = json.Unmarshal(message, &body)
+		if err != nil {
+			log.Println("Unmarshal error:", err)
+			continue
+		}
+
+		bytes, _ := json.Marshal(body)
 
 		websocketServer.Broadcast <- Message{
-			Payload: string(message),
+			Payload: string(bytes),
 		}
 	}
 
