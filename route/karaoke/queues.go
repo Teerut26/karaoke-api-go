@@ -21,10 +21,11 @@ type response struct {
 }
 
 func QueuesHandler(c *fiber.Ctx) error {
+	context := context.Background()
 	client := config.Firestore()
 	defer client.Close()
 
-	iter := client.Collection("songs").OrderBy("createdAt", firestore.Asc).Documents(context.Background())
+	iter := client.Collection("songs").OrderBy("createdAt", firestore.Asc).Documents(context)
 	datas := []response{}
 	for {
 		doc, err := iter.Next()

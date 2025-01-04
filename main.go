@@ -73,6 +73,7 @@ func main() {
 	karaokeRoute := v1Route.Group("/karaoke")
 	karaokeRoute.Get("/queues", karaoke.QueuesHandler)
 	karaokeRoute.Delete("/delete", karaoke.DeleteHandler)
+	karaokeRoute.Get("/current", karaoke.CurrentHandler)
 
 	log.Fatal(app.Listen(":3000"))
 }
