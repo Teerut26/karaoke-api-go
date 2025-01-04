@@ -1,4 +1,4 @@
 main
 video
-hls
+/hls
 .env
