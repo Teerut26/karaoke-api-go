@@ -15,7 +15,7 @@ type responseSchema struct {
 	ID string `json:"id"`
 }
 
-func SkipHandler(c *fiber.Ctx) error {
+func DeleteHandler(c *fiber.Ctx) error {
 	context := context.Background()
 
 	body := new(requestSchema)
