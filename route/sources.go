@@ -23,6 +23,7 @@ func SourcesHandler(c *fiber.Ctx) error {
 
 	ytdlp.MustInstall(context.TODO(), nil)
 	dl := ytdlp.New().Format(`bestvideo[height<=` + height + `]+bestaudio[ext=webm][protocol=https]/best`).DumpJSON()
+	// dl := ytdlp.New().Format(`bestvideo[height<=` + height + `]+bestaudio/best`).ExtractorArgs("youtube:player_client=ios").DumpJSON()
 	res, err := dl.Run(context.TODO(), youtubeURL)
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{
